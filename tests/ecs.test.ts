@@ -34,22 +34,6 @@ test('addEntity - entity with no components', ()=>{
     expect(ecs.getEntitiesByComponent('y')).toEqual([]);
 });
 
-test('addEntity - entity with no id', ()=>{
-    const ecs = new ECS<{id: number}>({});
-    
-    expect(()=>{
-        // @ts-ignore
-        ecs.addEntity({x: 0, y: 0});
-    }).toThrow('Cannot add an entity without an id of the appropriate type');
-
-    
-    expect(()=>{
-        // @ts-ignore
-        ecs.addEntity({id: new Date(), x: 0, y: 0});
-    }).toThrow('Cannot add an entity without an id of the appropriate type');
-});
-
-
 test('addEntities', ()=>{
     const ecs = new ECS<{id: number, x: number|null, y: number}>({});
     

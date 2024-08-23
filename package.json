@@ -6,7 +6,7 @@
   "files":["dist/*.*"],
   "scripts": {
     "test": "jest",
-    "build": "tsc"
+    "build": "tsc --build"
   },
   "type": "module",
   "author": "Michael Nolan",

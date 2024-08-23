@@ -1,11 +1,18 @@
 {
-    "files": [], // this root tsconfig just exists to compose sub-projects
-    "references": [
-      {
-        "path": "./src"
-      },
-      {
-        "path": "./tests"
-      }
-    ]
-  }
+  "files": [], // this root tsconfig just exists to compose sub-projects
+  "compilerOptions": {
+    "composite": true,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+    "outDir": "./dist",
+    //"rootDir": "./src",
+    "tsBuildInfoFile": "./dist/buildinfo",
+    "rootDirs": ["./src"]
+  },
+  "references": [
+    {
+      "path": "./src"
+    }
+  ]
+}

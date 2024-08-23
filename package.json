@@ -1,0 +1,19 @@
+{
+  "name": "ds-ecs",
+  "version": "0.0.1",
+  "description": "Dead Simple ECS",
+  "main": "dist/index.js",
+  "files":["dist/*.*"],
+  "scripts": {
+    "test": "jest",
+    "build": "tsc"
+  },
+  "type": "module",
+  "author": "Michael Nolan",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/jest": "^29.5.12",
+    "ts-jest": "^29.2.4",
+    "typescript": "^5.5.4"
+  }
+}

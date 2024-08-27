@@ -8,6 +8,10 @@
     "test": "jest",
     "build": "tsc --build"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/ssjarchon/ecs.git"
+  },
   "type": "module",
   "author": "Michael Nolan",
   "license": "ISC",

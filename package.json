@@ -1,6 +1,6 @@
 {
   "name": "ds-ecs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Dead Simple ECS",
   "main": "dist/index.js",
   "files":["dist/*.*"],

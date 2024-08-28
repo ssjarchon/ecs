@@ -96,7 +96,7 @@ Entity,
 'timestamp'|'name',
 null|undefined|'?'>({
     excludedComponentKeys: ['timestamp','name'],
-    isNegative: <Z>(val: any): val is Z => val === undefined || val === null || val === '?'
+    negativeValues: <Z>(val: any): val is Z => val === undefined || val === null || val === '?'
 });
 
 ```
@@ -115,7 +115,7 @@ The name 'id' is always considered an excluded key, and you do not need to inclu
 
 ### Query Entities by Component
 
-This is the primary way and advantage currently to this ECS; you can query easily by the existence (or simply the exclusion by the isNegative clause). This makes use of stored internal maps for fast data fetching. Queries returned in this way will return with a type that matches this existence (or when isNegative is defined, the exclusion of its type predicate.)
+This is the primary way and advantage currently to this ECS; you can query easily by the existence (or simply the exclusion by the negativeValues clause). This makes use of stored internal maps for fast data fetching. Queries returned in this way will return with a type that matches this existence (or when negativeValues is defined, the exclusion of its type predicate.)
 
 ```typescript
 const entitiesWithAnimationComponent =

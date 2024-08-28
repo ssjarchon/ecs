@@ -38,7 +38,7 @@ NegativeValues extends (Serializable | string) = (null | undefined)
         return reconstructedFunction;
     }
 
-    public constructor(options?:ECSOptions<E,ExcludedComponentKeys,NegativeValues>){
+    public constructor(options?:Partial<ECSOptions<E,ExcludedComponentKeys,NegativeValues>>){
         options?.negativeValues?.length;
         const theseOptions = options || {
             entities: [] as E[],
@@ -47,7 +47,7 @@ NegativeValues extends (Serializable | string) = (null | undefined)
         } as ECSOptions<E,ExcludedComponentKeys,NegativeValues>;
         theseOptions.entities = theseOptions.entities || [];
         theseOptions.excludedComponentKeys = theseOptions.excludedComponentKeys || ['id'] as ExcludedComponentKeys[];
-        theseOptions.negativeValues = theseOptions.negativeValues; //|| ([null, undefined] as unknown as NegativeValues);
+        theseOptions.negativeValues = theseOptions.negativeValues;// || ([null, undefined] as unknown as NegativeValues);
         
         this.weakMap = new WeakMap();
         

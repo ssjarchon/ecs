@@ -1,6 +1,7 @@
 {
   "files": [], // this root tsconfig just exists to compose sub-projects
   "compilerOptions": {
+    "lib": ["ES2022"],
     "composite": true,
     "declaration": true,
     "declarationMap": true,

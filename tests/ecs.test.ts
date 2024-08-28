@@ -43,3 +43,40 @@ test('addEntities', ()=>{
     expect(ecs.getEntitiesByComponent('x').length).toBe(1);
     expect(ecs.getEntitiesByComponent('y').length).toBe(2);
 });
+
+test('negativeValues', ()=>{
+    const ecs = new ECS<{id: number, x?: number|null, y: number},never,null|undefined>({
+        negativeValues: <Q extends null|undefined>(value: any): value is Q => {
+            console.log('negative test: ',value);
+            return value === null || value === undefined;
+        }
+    });
+    
+    ecs.addEntity({id: 1, x: 0, y: 0});
+    ecs.addEntity({id: 2, x: null, y: 0});
+    expect(ecs.getEntitiesByComponent('x').length).toBe(1);
+    expect(ecs.getEntitiesByComponent('y').length).toBe(2);
+});
+
+
+test('default negativeValues', ()=>{
+    const ecs = new ECS<{id: number, x?: number|null, y: number},never,null|undefined>();
+    
+    ecs.addEntity({id: 1, x: 0, y: 0});
+    ecs.addEntity({id: 2, x: null, y: 0});
+    expect(ecs.getEntitiesByComponent('x').length).toBe(1);
+    expect(ecs.getEntitiesByComponent('y').length).toBe(2);
+});
+
+test('oddly specific negativeValues', ()=>{
+    const ecs = new ECS<{id: number, x?: number|null, y: number},never,null|undefined|1>({
+        negativeValues: [null, undefined, 1]
+    });
+    
+    ecs.addEntity({id: 1, x: 0, y: 0});
+    ecs.addEntity({id: 2, x: null, y: 0});
+    ecs.addEntity({id: 3, x: 1, y: 0});
+    expect(ecs.getEntitiesByComponent('x').length).toBe(1);
+    
+    expect(ecs.getEntitiesByComponent('y').length).toBe(3);
+});

@@ -30,8 +30,13 @@ NegativeValues extends (Serializable | string) = (null | undefined)
     private static reconstructIsNegativeFunction(negativeValues: string|Function){
         let reconstructedFunction: <T, Z extends T = T>(value: any) => value is Z;
             try{
-                reconstructedFunction =  new Function(typeof negativeValues === 'function' ? negativeValues.toString() : negativeValues) as <T, Z extends T = T>(value: any) => value is Z;
-            }
+                if(typeof negativeValues === 'function'){
+                    reconstructedFunction = new Function('value', negativeValues.toString().slice(negativeValues.toString().indexOf('{')+1,negativeValues.toString().lastIndexOf('}'))) as <T, Z extends T = T>(value: any) => value is Z;
+                }
+                else{
+                    reconstructedFunction =  new Function('value', negativeValues) as <T, Z extends T = T>(value: any) => value is Z;
+                }
+                        }
             catch(e){
                 throw new Error('The negativeValues string could not be evaluated as a function');
             }
@@ -63,7 +68,13 @@ NegativeValues extends (Serializable | string) = (null | undefined)
             this.isNegative = ECS.reconstructIsNegativeFunction(theseOptions.negativeValues);
         }
         else if(theseOptions.negativeValues === undefined || Array.isArray(theseOptions.negativeValues)){
-            this.isNegative = ECS.reconstructIsNegativeFunction(`return ${JSON.stringify(Array.isArray(theseOptions.negativeValues) && theseOptions.negativeValues.length > 0 ? theseOptions.negativeValues : [null, undefined])}.some(k=>k===value || (typeof k === 'object' && typeof value === 'object' && JSON.stringify(k) === JSON.stringify(value)))`);
+            const goon = crypto.randomUUID();
+            this.isNegative = ECS.reconstructIsNegativeFunction(`return ${JSON.stringify(Array.isArray(theseOptions.negativeValues) && theseOptions.negativeValues.length > 0 ? theseOptions.negativeValues : [null, undefined], (key, val)=>{
+                if(val === undefined){
+                    return goon;
+                }
+                return val;
+            }).replaceAll(`"${goon}"`,'undefined')}.some(k=>k===value || (typeof k === 'object' && typeof value === 'object' && JSON.stringify(k) === JSON.stringify(value)))`);
         }
         else{
             throw new Error('negativeValues must be a string, function, or array');
@@ -141,16 +152,23 @@ NegativeValues extends (Serializable | string) = (null | undefined)
      */
     public indexEntity(entity: E){
         Object.keys(entity).forEach((key)=>{
+            
             if(this.excludedComponentKeys.has(key as ExcludedComponentKeys)){
                 return;
             }
-            let set = this.entitiesByComponent.get(key as Exclude<keyof E, InvalidKeyName|ExcludedComponentKeys>);
+            const thisKey = key as Exclude<keyof E, InvalidKeyName|ExcludedComponentKeys> & keyof E;
+            let set = this.entitiesByComponent.get(thisKey);
+            let existingSet = true;
             if(!set){
-                this.entitiesByComponent.set(key as Exclude<keyof E, InvalidKeyName|ExcludedComponentKeys>, new Set());
-                set = this.entitiesByComponent.get(key as Exclude<keyof E, InvalidKeyName|ExcludedComponentKeys>);
+                this.entitiesByComponent.set(thisKey, new Set());
+                set = this.entitiesByComponent.get(thisKey);
+                existingSet = false;
             }
-            if(!this.isNegative(entity[key as Exclude<keyof E, InvalidKeyName|ExcludedComponentKeys> & keyof E])){
+            if(!this.isNegative<Entity, Entity&{[key in typeof thisKey]: NegativeValues}>(entity[thisKey])){
                 (set as Set<E['id']>).add(entity.id);
+            }
+            else if(existingSet){
+                (set as Set<E['id']>).delete(entity.id);
             }
         });
     }
@@ -166,6 +184,9 @@ NegativeValues extends (Serializable | string) = (null | undefined)
             throw new Error('Cannot add an entity without an id of the appropriate type');
         }
         const e = this.generateProxyOfEntity(entity);
+        if(this.entities.has(e.id)){
+            throw new Error(`An entity with the id ${e.id} already exists in the ECS`);
+        }
         this.entities.set(e.id, e);
         this.indexEntity(e);
         return this.entities.get(e.id) as ProxiedEntity<E>;

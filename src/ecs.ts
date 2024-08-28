@@ -69,7 +69,7 @@ NegativeValues extends (Serializable | string) = (null | undefined)
         }
         else if(theseOptions.negativeValues === undefined || Array.isArray(theseOptions.negativeValues)){
             const goon = crypto.randomUUID();
-            this.isNegative = ECS.reconstructIsNegativeFunction(`return ${JSON.stringify(Array.isArray(theseOptions.negativeValues) && theseOptions.negativeValues.length > 0 ? theseOptions.negativeValues : [null, undefined], (key, val)=>{
+            this.isNegative = ECS.reconstructIsNegativeFunction(`return ${JSON.stringify(Array.isArray(theseOptions.negativeValues) && theseOptions.negativeValues.length > 0 ? theseOptions.negativeValues : [null, undefined], (_, val)=>{
                 if(val === undefined){
                     return goon;
                 }
